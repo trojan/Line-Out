@@ -151,3 +151,106 @@ body::after {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
     z-index: 99;
 }
+
+.cutscenes {
+    background: #000;
+    animation-delay: 9s;
+    z-index: 999;
+}
+
+.cutscenes, .cutscenes div {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.cutscenes div {
+    --bg: #000;
+    --secs: 0s;
+
+    background: var(--bg);
+    opacity: 1;
+}
+
+.cutscenes div::after {
+    --text: "";
+    content: var(--text);
+    font: 300 22pt 'Roboto', sans-serif;
+    display: block;
+    padding: 1em;
+    color: #fff;
+    width: 90%;
+    height: fit-content;
+    background: #1f1f1f9e;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: -80%;
+    text-align: center;
+    border-radius: 5px;
+    mix-blend-mode: exclusion;
+}
+
+.cutscenes div:nth-child(1)::after {
+    --text: "lorem ipsum dolor sit amet";
+}
+
+.cutscenes div:nth-child(2)::after {
+    --text: "blah blah blah";
+}
+
+.cutscenes div:nth-child(3)::after {
+    --text: "kek";
+}
+
+.cutscenes div:nth-child(1) {
+    --bg: url('../assets/cutscenes/MoonNoBorder.jpg') center fixed / cover;
+    z-index: 4;
+}
+
+.cutscenes div:nth-child(2) {
+    --bg: url('../assets/cutscenes/DannyGoSleepNoBorder.jpg') center fixed / 80%;
+    z-index: 3;
+}
+
+.cutscenes div:nth-child(3) {
+    --bg: #090909 url('../assets/cutscenes/Sleepy1.jpg') center center no-repeat / 70%;
+    z-index: 2;
+}
+
+@-webkit-keyframes fade {
+    100% {
+	opacity: 0;
+	visibility: hidden;
+    }
+}
+
+@-webkit-keyframes fade-eyes {
+    80% {
+	--bg: #090909 url('../assets/cutscenes/Sleepy2.jpg') center center no-repeat / 70%;
+    }
+    90% {
+	--bg: #090909 url('../assets/cutscenes/Sleepy3.jpg') center center no-repeat / 70%;
+    }
+    100% {
+	opacity: 0;
+	display: none;
+	visibility: hidden;
+    }
+}
+
+@-webkit-keyframes exit-cutscene {
+    100% {
+	opacity: 0;
+	visibility: hidden;
+	display: none;
+    }
+}
+
+@-webkit-keyframes slide {
+    100% {
+	bottom: -60%;
+    }
+}

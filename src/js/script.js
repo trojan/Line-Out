@@ -71,15 +71,30 @@ function create ()
 
   $('.options li[save-load]').innerHTML = changeTarget('save');
 
+  let scene = 1;
+
   window.onkeyup = (e) => {
-    if (e.key === 'Escape' || e.key == 'Enter')
-      toggleMenu();
-    else if (e.key === 'p') {
-      states['pause']();
+    // cutscene keybindings
+    if ($('.cutscenes').getAttribute('style') === null) {
+      if (e.keyCode == 32) {
+	$(`.cutscenes div:nth-child(${scene++})`).setAttribute('style', `animation: fade 1s forwards`);
 
-      $('.options li[states]').innerHTML = changeState(paused);
+	if (scene == 3)
+	  $(`.cutscenes div:nth-child(3)`).setAttribute('style', 'animation: fade-eyes 1s forwards');
+	else if (scene >= 4)
+	  $('.cutscenes').setAttribute('style', 'animation: exit-cutscene 8s forwards');
+      }
+    }
+    else {
+      if (e.key === 'Escape' || e.key == 'Enter')
+	toggleMenu();
+      else if (e.key === 'p') {
+	states['pause']();
 
-      toggleMenu();
+	$('.options li[states]').innerHTML = changeState(paused);
+
+	toggleMenu();
+      }
     }
   };
 
