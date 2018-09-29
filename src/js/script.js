@@ -1,5 +1,5 @@
 const $  = (e) => document.querySelector(e),
-      $$ = (e) => document.querySelectorAll(e);
+$$ = (e) => document.querySelectorAll(e);
 
 const config = {
   type: Phaser.AUTO,
@@ -64,7 +64,7 @@ function create ()
   }
 
   let toggleMenu = () =>
-    $('#menu').classList.toggle('active');
+  $('#menu').classList.toggle('active');
 
   let changeState  = (state) => state ? 'continue' : 'pause';
   let changeTarget = (target) => target === 'save' ? 'load' : 'save';
@@ -77,26 +77,26 @@ function create ()
     // cutscene keybindings
     if ($('.cutscenes').getAttribute('style') === null) {
       if (e.keyCode == 32) {
-	$(`.cutscenes div:nth-child(${scene++})`).setAttribute('style', `animation: fade 1s forwards`);
+       $(`.cutscenes div:nth-child(${scene++})`).setAttribute('style', `animation: fade 1s forwards`);
 
-	if (scene == 3)
-	  $(`.cutscenes div:nth-child(3)`).setAttribute('style', 'animation: fade-eyes 1s forwards');
-	else if (scene >= 4)
-	  $('.cutscenes').setAttribute('style', 'animation: exit-cutscene 8s forwards');
-      }
-    }
-    else {
-      if (e.key === 'Escape' || e.key == 'Enter')
-	toggleMenu();
-      else if (e.key === 'p') {
-	states['pause']();
+       if (scene == 3)
+         $(`.cutscenes div:nth-child(3)`).setAttribute('style', 'animation: fade-eyes 1s forwards');
+       else if (scene >= 4)
+         $('.cutscenes').setAttribute('style', 'animation: exit-cutscene 8s forwards');
+     }
+   }
+   else {
+    if (e.key === 'Escape' || e.key == 'Enter')
+     toggleMenu();
+   else if (e.key === 'p') {
+     states['pause']();
 
-	$('.options li[states]').innerHTML = changeState(paused);
+     $('.options li[states]').innerHTML = changeState(paused);
 
-	toggleMenu();
-      }
-    }
-  };
+     toggleMenu();
+   }
+ }
+};
 
   // SAVE AND LOAD
   if (localStorage['playerPos'] === undefined)
@@ -135,7 +135,7 @@ function create ()
 
   map = this.make.tilemap({ key: 'level1' });
   var groundTiles = map.addTilesetImage('tiles');
-  groundLayer = map.createStaticLayer('World', groundTiles, 0, 0);
+  groundLayer = map.createStaticLayer('Map', groundTiles, 0, 0);
 
   groundLayer.setCollisionByProperty({ collides: true });
   groundLayer.setCollisionBetween(1, 32);

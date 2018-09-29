@@ -38,8 +38,8 @@ canvas {
     height: 500px;
     background: rgba(255, 255, 255, .05);
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .2),
-                0 0 0 var(--outer-border) rgb(0, 0, 0),
-                0 0 0 calc(var(--outer-border) + 1px) rgba(255, 255, 255, .1);
+    0 0 0 var(--outer-border) rgb(0, 0, 0),
+    0 0 0 calc(var(--outer-border) + 1px) rgba(255, 255, 255, .1);
     grid-template-rows: 30% repeat(2, 50px) auto 60px [audio];
     grid-template-columns: 50%;
     transition: box-shadow .5s;
@@ -156,6 +156,8 @@ body::after {
     background: #000;
     animation-delay: 9s;
     z-index: 999;
+
+    display: none;
 }
 
 .cutscenes, .cutscenes div {
@@ -222,35 +224,35 @@ body::after {
 
 @-webkit-keyframes fade {
     100% {
-	opacity: 0;
-	visibility: hidden;
-    }
+       opacity: 0;
+       visibility: hidden;
+   }
 }
 
 @-webkit-keyframes fade-eyes {
     80% {
-	--bg: #090909 url('../assets/cutscenes/Sleepy2.jpg') center center no-repeat / 70%;
-    }
-    90% {
-	--bg: #090909 url('../assets/cutscenes/Sleepy3.jpg') center center no-repeat / 70%;
-    }
-    100% {
-	opacity: 0;
-	display: none;
-	visibility: hidden;
-    }
+       --bg: #090909 url('../assets/cutscenes/Sleepy2.jpg') center center no-repeat / 70%;
+   }
+   90% {
+       --bg: #090909 url('../assets/cutscenes/Sleepy3.jpg') center center no-repeat / 70%;
+   }
+   100% {
+       opacity: 0;
+       display: none;
+       visibility: hidden;
+   }
 }
 
 @-webkit-keyframes exit-cutscene {
     100% {
-	opacity: 0;
-	visibility: hidden;
-	display: none;
-    }
+       opacity: 0;
+       visibility: hidden;
+       display: none;
+   }
 }
 
 @-webkit-keyframes slide {
     100% {
-	bottom: -60%;
-    }
+       bottom: -60%;
+   }
 }
