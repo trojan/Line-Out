@@ -22,6 +22,8 @@ const config = {
 
 var game = new Phaser.Game(config);
 
+
+
 function preload ()
 {
   this.load.spritesheet('tiles', 'assets/world/tileset.png', { frameWidth: 32, frameHeight: 32 });
@@ -31,10 +33,13 @@ function preload ()
   this.load.image('middle', 'assets/world/middle.png');
   this.load.image('monster', 'assets/sprites/monster.png');
   this.load.image('back', 'assets/world/back.png');
+  this.load.image('cavernBack', 'assets/world/cavernBackground.png');
   this.load.spritesheet('char', 'assets/sprites/char.png', { frameWidth: 135, frameHeight: 160 });
+
 }
 
-var player, cursors, monster, background, shapes, cameras, map, groundLayer;
+var player, cursors, monster, background, backgroundCavern, shapes, cameras, map, groundLayer;
+let getPos = () => console.log(this.player.x + 'x', this.player.y + 'y');
 
 function create ()
 {
@@ -128,10 +133,16 @@ function create ()
   // +-----------+
   // |   WORLD   |
   // +-----------+
-  background = this.add.tileSprite(294, 350, innerWidth, innerHeight, 'back');
+
+  background = this.add.tileSprite(294, 250, innerWidth, innerHeight, 'back');
 
   background.scaleX = (game.canvas.width / 1000);
   background.scaleY = background.scaleX;
+
+  backgroundCavern = this.add.tileSprite(1876, 1500, innerWidth, innerHeight, 'cavernBack');
+
+  backgroundCavern.scaleX = (game.canvas.width / 1000);
+  backgroundCavern.scaleY = backgroundCavern.scaleX;
 
   map = this.make.tilemap({ key: 'level1' });
   var groundTiles = map.addTilesetImage('tiles');
