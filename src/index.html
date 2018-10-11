@@ -11,34 +11,38 @@
         <link rel="stylesheet" type="text/css" href="css/base.css">
         <link rel="icon" href="https://i.imgur.com/CqXD1im.gif" sizes="16x16 32x32 48x48 150x150" type="image/vnd.microsoft.icon">
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Charmonman" rel="stylesheet">       
         <title>Line Out</title>
-        
     </head>
-<body>
-    <!-- <div class="gloom"></div>
-    <div class="light"></div> -->
-    <div class="cutscenes">
-	<div></div>
-	<div></div>
-	<div></div>
-    </div>
-    <audio menu-hover>
-        <source src="assets/audio/menu.wav"></source>
-    </audio>
-    <audio menu-click>
-        <source src="assets/audio/menuclick.wav"></source>
-    </audio>
-    <div id="menu">
-        <ul class="options">
-            <li states>pause</li>
-            <li save-load>save</li>
-            <div class="sound">
-                <h1>AUDIO: <span></span></h1>
-                <input type="range" min="1" max="100" value="50" class="slider">
-            </div>
-        </ul>
-    </div>
-    <script type="text/javascript" src="js/phaser.min.js"></script>
-    <script type="text/javascript" src="js/script.js"></script>
-</body>
+    <body>
+        <div class="gloom">
+            <div class="light"></div>
+        </div>
+        <div class="cutscenes">
+	          <div></div>
+	          <div></div>
+	          <div></div>
+        </div>
+        <audio menu-hover>
+            <source src="assets/audio/menu.wav"></source>
+        </audio>
+        <audio menu-click>
+            <source src="assets/audio/menuclick.wav"></source>
+        </audio>
+        <audio walking-grass>
+            <source src="assets/audio/walking-grass.wav"></source>
+        </audio>
+        <div id="menu">
+            <ul class="options">
+                <li states>pause</li>
+                <li save-load>save</li>
+                <div class="sound">
+                    <h1>AUDIO: <span></span></h1>
+                    <input type="range" min="1" max="100" value="50" class="slider">
+                </div>
+            </ul>
+        </div>
+        <script type="text/javascript" src="js/phaser.min.js"></script>
+        <script type="text/javascript" src="js/script.js"></script>
+    </body>
 </html>

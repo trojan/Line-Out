@@ -10,7 +10,7 @@ canvas {
     position: absolute;
     top: -100%;
     background: rgba(0, 0, 0, 0);
-    z-index: 99;
+    z-index: 999;
     opacity: 0;
     transition: top 1s, opacity 1s, background 1s;
 }
@@ -114,31 +114,29 @@ canvas {
 
 .gloom {
     position: absolute;
-    background: rgba(0, 0, 0, 0.82);
     width: 100%;
     height: 100%;
     z-index: 99;
     top: 0;
     left: 0;
-    mix-blend-mode: soft-light;
+    box-shadow: inset 0 0 500px #000;
 }
 
 .light {
-    position: absolute;
+    position: fixed;
     background: rgba(255, 255, 255, 0.82);
-    top: calc(176px - 150px);
-    /* player.y - 150px */
-    left: calc(802px - (2168px / 2) + 300px);
-    /* ((player.x - innerWidth) - (player.x / 2) + 300)*/
     bottom: 0;
-    right: 0;
+    left: 0;
+    top: 100px;
+    right: 160px;
     margin: 0 auto;
     width: 300px;
     height: 300px;
-    mix-blend-mode: overlay;
     z-index: 3333;
     border-radius: 50%;
-    box-shadow: 0 0 50px #fff;
+    box-shadow: 0 0 1000px 1000px rgba(0, 0, 0, 0.8), inset 0 0 200px 23px rgb(0, 0, 0);
+    background: transparent;
+    transform: translate(100px, 150px);
 }
 
 body::after {
@@ -157,7 +155,7 @@ body::after {
     animation-delay: 9s;
     z-index: 999;
 
-    display: none;
+    /*display: none;*/
 }
 
 .cutscenes, .cutscenes div {
@@ -171,19 +169,19 @@ body::after {
     --secs: 0s;
 
     background: var(--bg);
+    animation: move 15s infinite;
     opacity: 1;
 }
 
 .cutscenes div::after {
     --text: "";
     content: var(--text);
-    font: 300 22pt 'Roboto', sans-serif;
+    font: 300 22pt 'Charmonman', sans-serif;
     display: block;
     padding: 1em;
     color: #fff;
     width: 90%;
     height: fit-content;
-    background: #1f1f1f9e;
     margin: auto;
     position: absolute;
     top: 0;
@@ -192,19 +190,20 @@ body::after {
     bottom: -80%;
     text-align: center;
     border-radius: 5px;
-    mix-blend-mode: exclusion;
+    /* mix-blend-mode: exclusion; */
+    text-shadow: 0 0 5px #000;
 }
 
 .cutscenes div:nth-child(1)::after {
-    --text: "lorem ipsum dolor sit amet";
+    --text: "It was a starry night, the waxing moon in all it's might, shining it's crystal light.";
 }
 
 .cutscenes div:nth-child(2)::after {
-    --text: "blah blah blah";
+    --text: "The creatures dwelling in the night, ever so fearful, ever so alive.";
 }
 
 .cutscenes div:nth-child(3)::after {
-    --text: "kek";
+    --text: "...";
 }
 
 .cutscenes div:nth-child(1) {
@@ -222,23 +221,17 @@ body::after {
     z-index: 2;
 }
 
+@-webkit-keyframes move {
+    50% {
+        background-position: 100px;
+        background-position-y: -30px;
+        background-size: 100%;
+    }
+}
+
 @-webkit-keyframes fade {
     100% {
        opacity: 0;
-       visibility: hidden;
-   }
-}
-
-@-webkit-keyframes fade-eyes {
-    80% {
-       --bg: #090909 url('../assets/cutscenes/Sleepy2.jpg') center center no-repeat / 70%;
-   }
-   90% {
-       --bg: #090909 url('../assets/cutscenes/Sleepy3.jpg') center center no-repeat / 70%;
-   }
-   100% {
-       opacity: 0;
-       display: none;
        visibility: hidden;
    }
 }

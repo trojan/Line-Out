@@ -1,3 +1,6 @@
-mongoose.exe
+mongoose-6.9.exe
 scenery.jpg
 scenery.psd
+src/assets/tileset.psd
+src/assets/sprite/char.psd
+src/assets/sprite/fire/Fire.psd

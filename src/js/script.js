@@ -1,5 +1,5 @@
 const $  = (e) => document.querySelector(e),
-$$ = (e) => document.querySelectorAll(e);
+      $$ = (e) => document.querySelectorAll(e);
 
 const config = {
   type: Phaser.AUTO,
@@ -22,23 +22,28 @@ const config = {
 
 var game = new Phaser.Game(config);
 
-
-
 function preload ()
 {
   this.load.spritesheet('tiles', 'assets/world/tileset.png', { frameWidth: 32, frameHeight: 32 });
   this.load.tilemapTiledJSON('level1', 'assets/world/tilemap.json');
 
-  // this.load.json('Phase1', 'assets/world/Phase1.json');
-  this.load.image('middle', 'assets/world/middle.png');
+  this.load.image('fire', 'assets/sprites/fire/png/1.png');
+  this.load.image('fire-01', 'assets/sprites/fire/png/2.png');
+  this.load.image('fire-02', 'assets/sprites/fire/png/3.png');
+  this.load.image('fire-03', 'assets/sprites/fire/png/4.png');
+  this.load.image('fire-04', 'assets/sprites/fire/png/5.png');
+  this.load.image('fire-05', 'assets/sprites/fire/png/6.png');
+  this.load.image('fire-06', 'assets/sprites/fire/png/7.png');
+
+
   this.load.image('monster', 'assets/sprites/monster.png');
   this.load.image('back', 'assets/world/back.png');
   this.load.image('cavernBack', 'assets/world/cavernBackground.png');
   this.load.spritesheet('char', 'assets/sprites/char.png', { frameWidth: 135, frameHeight: 160 });
-
 }
 
-var player, cursors, monster, background, backgroundCavern, shapes, cameras, map, groundLayer;
+var player, cursors, monster, background, backgroundCavern, shapes, cameras, map, groundLayer, fire;
+
 let getPos = () => console.log(this.player.x + 'x', this.player.y + 'y');
 
 function create ()
@@ -46,15 +51,17 @@ function create ()
   // +----------+
   // |   MENU   |
   // +----------+
+  let toggleMenu = () =>
+      $('#menu').classList.toggle('active');
 
   // AUDIO
-  $$('#menu .options li').forEach(e =>
-    e.onmouseover = () => $('audio[menu-hover]').play());
+  $$('#menu .options li').forEach(e => e.onmouseover = () => $('audio[menu-hover]').play());
+  $('audio[walking-grass]').volume = 0.3;
 
   let paused = false;
   let sound  = localStorage['sound'] || 50;
   let states = {
-    pause:    () => { this.scene.pause(); paused = true },
+    pause:    () => { this.scene.pause(); paused = true; },
     continue: () => { this.scene.resume(); paused = false; toggleMenu(); },
     start:    () => { states['continue'](); }
   };
@@ -66,10 +73,7 @@ function create ()
     localStorage['sound'] = e.target.value;
 
     $('.sound h1 span').innerHTML = `${localStorage['sound']}%`;
-  }
-
-  let toggleMenu = () =>
-  $('#menu').classList.toggle('active');
+  };
 
   let changeState  = (state) => state ? 'continue' : 'pause';
   let changeTarget = (target) => target === 'save' ? 'load' : 'save';
@@ -82,26 +86,24 @@ function create ()
     // cutscene keybindings
     if ($('.cutscenes').getAttribute('style') === null) {
       if (e.keyCode == 32) {
-       $(`.cutscenes div:nth-child(${scene++})`).setAttribute('style', `animation: fade 1s forwards`);
+        $(`.cutscenes div:nth-child(${scene++})`).setAttribute('style', `animation: fade 1s forwards`);
 
-       if (scene == 3)
-         $(`.cutscenes div:nth-child(3)`).setAttribute('style', 'animation: fade-eyes 1s forwards');
-       else if (scene >= 4)
-         $('.cutscenes').setAttribute('style', 'animation: exit-cutscene 8s forwards');
-     }
-   }
-   else {
-    if (e.key === 'Escape' || e.key == 'Enter')
-     toggleMenu();
-   else if (e.key === 'p') {
-     states['pause']();
+        if (scene >= 4)
+          $('.cutscenes').setAttribute('style', 'animation: exit-cutscene 8s forwards');
+      }
+    }
+    else {
+      if (e.key === 'Escape' || e.key == 'Enter')
+        toggleMenu();
+      else if (e.key === 'p') {
+        states['pause']();
 
-     $('.options li[states]').innerHTML = changeState(paused);
+        $('.options li[states]').innerHTML = changeState(paused);
 
-     toggleMenu();
-   }
- }
-};
+        toggleMenu();
+      }
+    }
+  };
 
   // SAVE AND LOAD
   if (localStorage['playerPos'] === undefined)
@@ -133,35 +135,30 @@ function create ()
   // +-----------+
   // |   WORLD   |
   // +-----------+
-
   background = this.add.tileSprite(294, 250, innerWidth, innerHeight, 'back');
 
   background.scaleX = (game.canvas.width / 1000);
   background.scaleY = background.scaleX;
 
-  backgroundCavern = this.add.tileSprite(1876, 1500, innerWidth, innerHeight, 'cavernBack');
+  // backgroundCavern = this.add.tileSprite(1876, 1500, innerWidth, innerHeight, 'cavernBack');
 
-  backgroundCavern.scaleX = (game.canvas.width / 1000);
-  backgroundCavern.scaleY = backgroundCavern.scaleX;
+  // backgroundCavern.scaleX = (game.canvas.width / 1000);
+  // backgroundCavern.scaleY = backgroundCavern.scaleX;
 
   map = this.make.tilemap({ key: 'level1' });
   var groundTiles = map.addTilesetImage('tiles');
   groundLayer = map.createStaticLayer('Map', groundTiles, 0, 0);
 
   groundLayer.setCollisionByProperty({ collides: true });
-  groundLayer.setCollisionBetween(1, 32);
+
+  // collision range in the tileset
+  [
+    [8, 12],
+    [18, 32]
+  ].forEach(x => groundLayer.setCollisionBetween(...x));
 
   this.physics.world.bounds.width = groundLayer.width;
   this.physics.world.bounds.height = groundLayer.height;
-
-  // monster = this.add.image(300, 400, 'monster');
-
-  // monster.visible = false;
-
-  // setInterval(() => {
-  //   monster.visible = monster.visible == false ? true : false;
-  //   // monster.visible = monster.visible || 1;
-  // }, 1000);
 
   // +------------+
   // |   PLAYER   |
@@ -199,13 +196,41 @@ function create ()
 
   player.body.collideWorldBounds = true;
 
+  this.anims.create({
+    key: 'flicker',
+    frames: [
+      { key: 'fire-01' },
+      { key: 'fire-02' },
+      { key: 'fire-03' },
+      { key: 'fire-04' },
+      { key: 'fire-05' },
+      { key: 'fire-06' }
+    ],
+    frameRate: 10,
+    repeat: -1
+  });
+
+  fire = this.add.sprite(810, 830, 'fire-01').play('flicker');
+  fire.setScale(0.3);
+
+  this.physics.add.collider(player, fire);
+  this.physics.add.overlap(player, fire, collectFire, null, this);
+
   background.width *= player.x;
-  background.y = 0;
+}
+
+// fix collision with fire
+function collectFire (player, fire)
+{
+  fire.disableBody(true, true);
 }
 
 function update ()
 {
-  velocity = 360;
+  let velocity = 360,
+      bgVelocity = 1;
+
+  background.y = player.y + 40;
 
   if (cursors.left.isDown) {
     player.flipX = true;
@@ -213,7 +238,10 @@ function update ()
     player.setVelocityX(-velocity);
     player.anims.play('left', true);
 
-    background.tilePositionX -= 5;
+    background.tilePositionX -= bgVelocity;
+
+    if (player.body.onFloor())
+      $('audio[walking-grass]').play();
   }
   else if (cursors.right.isDown) {
     player.flipX = false;
@@ -221,18 +249,30 @@ function update ()
     player.setVelocityX(velocity);
     player.anims.play('right', true);
 
-    background.tilePositionX += 5;
+    background.tilePositionX += bgVelocity;
+
+    if (player.body.onFloor())
+      $('audio[walking-grass]').play();
   }
   else {
     player.setVelocityX(0);
     player.anims.play('turn');
+    $('audio[walking-grass]').pause();
   }
 
-  // if (cursors.up.isDown && player.body.touching.down)
-    // player.setVelocityY(-230);
+  $('.gloom').style.width = groundLayer.width;
+  $('.gloom').style.height = groundLayer.height;
 
-  // $('.light').setAttribute('style', `left: ${(player.x - Math.abs(player.x - innerWidth))}px !important`)
+  if (cursors.up.isDown && player.body.onFloor()) {
+    player.setVelocityY(-400);
+    $('audio[walking-grass]').pause();
+  }
 
-  if (cursors.up.isDown && this.physics.overlap(player, groundLayer))
-    player.setVelocityY(-230);
+  // coordinates where the monster will appear
+  [
+    [2475, 1328, 1980, 1232]
+  ].forEach((xy) => {
+    if (player.x >= xy[0] && player.y >= xy[1])
+      monster = this.add.image(xy[2], xy[3], 'monster');
+  });
 }
