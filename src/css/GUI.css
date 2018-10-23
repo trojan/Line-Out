@@ -40,11 +40,12 @@ canvas {
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .2),
     0 0 0 var(--outer-border) rgb(0, 0, 0),
     0 0 0 calc(var(--outer-border) + 1px) rgba(255, 255, 255, .1);
-    grid-template-rows: 30% repeat(2, 50px) auto 60px [audio];
+    grid-template-rows: 30% repeat(3, 50px) auto 60px [audio];
     grid-template-columns: 50%;
     transition: box-shadow .5s;
+    position: absolute;
+    overflow: hidden;
 }
-
 
 #menu .options:hover {
     --outer-border: 0;
@@ -66,11 +67,19 @@ canvas {
     grid-row: 2;
 }
 
-#menu .options li:nth-child(2) {
+#menu .options li[save-load] {
     grid-row: 3;
 }
 
+#menu .options li:nth-child(2) {
+    grid-row: 2;
+}
+
 #menu .sound {
+    grid-row: 5;
+}
+
+#menu li[controls] {
     grid-row: 4;
 }
 
@@ -120,6 +129,7 @@ canvas {
     top: 0;
     left: 0;
     box-shadow: inset 0 0 500px #000;
+    transition: all .3s;
 }
 
 .light {
@@ -155,7 +165,7 @@ body::after {
     animation-delay: 9s;
     z-index: 999;
 
-    /*display: none;*/
+    display: none;
 }
 
 .cutscenes, .cutscenes div {
@@ -248,4 +258,73 @@ body::after {
     100% {
        bottom: -60%;
    }
+}
+
+.controls-guide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #000 url('../control-guide.jpg') center no-repeat;
+    border: 6px dashed #757575;
+    z-index: 1;
+    opacity: 0;
+    visibility: hidden;
+    transition: all .3s ease-in-out;
+}
+
+.controls-guide.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.controls-guide .close {
+    top: 1em;
+    right: 1em;
+    position: absolute;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    color: #fff;
+}
+
+.controls-guide .close:hover {
+    opacity: .8;
+}
+
+.game-over {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, #ff00001c, black);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all .3s ease-in-out;
+}
+
+.game-over.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.game-over h1 {
+    text-transform: uppercase;
+    color: #ffbdbd;
+    letter-spacing: .2em;
+    font: 800 90pt 'Roboto', sans-serif;
+}
+
+.game-over .score {
+    font: 400 14pt 'Roboto', sans-serif;
+    color: white;
+    text-align: center;
+}
+
+.game-over .score span {
+    font-weight: 800;
+    color: #42fd96;
 }

@@ -11,17 +11,23 @@
         <link rel="stylesheet" type="text/css" href="css/base.css">
         <link rel="icon" href="https://i.imgur.com/CqXD1im.gif" sizes="16x16 32x32 48x48 150x150" type="image/vnd.microsoft.icon">
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Charmonman" rel="stylesheet">       
+        <link href="https://fonts.googleapis.com/css?family=Charmonman" rel="stylesheet">
         <title>Line Out</title>
     </head>
     <body>
+	<div class="game-over">
+	    <div>
+		<h1>Game Over!</h1>
+		<p class="score">You survived for <span class="score-time">42</span> seconds.</p>
+	    </div>
+	</div>
         <div class="gloom">
             <div class="light"></div>
         </div>
         <div class="cutscenes">
-	          <div></div>
-	          <div></div>
-	          <div></div>
+	    <div></div>
+	    <div></div>
+	    <div></div>
         </div>
         <audio menu-hover>
             <source src="assets/audio/menu.wav"></source>
@@ -34,8 +40,10 @@
         </audio>
         <div id="menu">
             <ul class="options">
+		<div class="controls-guide"><div class="close" onclick="document.querySelector('.controls-guide').classList.remove('show');"><span>&#10006;</span></div></div>
                 <li states>pause</li>
                 <li save-load>save</li>
+                <li controls>controls</li>
                 <div class="sound">
                     <h1>AUDIO: <span></span></h1>
                     <input type="range" min="1" max="100" value="50" class="slider">

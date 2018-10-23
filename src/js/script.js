@@ -9,7 +9,7 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 500 },
+      gravity: { y: 1500 },
       debug: false
     }
   },
@@ -35,24 +35,48 @@ function preload ()
   this.load.image('fire-05', 'assets/sprites/fire/png/6.png');
   this.load.image('fire-06', 'assets/sprites/fire/png/7.png');
 
-
   this.load.image('monster', 'assets/sprites/monster.png');
   this.load.image('back', 'assets/world/back.png');
   this.load.image('cavernBack', 'assets/world/cavernBackground.png');
   this.load.spritesheet('char', 'assets/sprites/char.png', { frameWidth: 135, frameHeight: 160 });
 }
 
-var player, cursors, monster, background, backgroundCavern, shapes, cameras, map, groundLayer, fire;
+var player,
+    cursors,
+    monster,
+    background,
+    cameras,
+    map,
+    groundLayer,
+    fire,
+    light_intensity = 0,
+    time;
 
 let getPos = () => console.log(this.player.x + 'x', this.player.y + 'y');
 
 function create ()
 {
+  time = new Date().getSeconds();
+  // LIGHTING
+  let light = setInterval(dim, 1000);
+
+  function dim() {
+    $('.gloom').setAttribute('style', `background: rgba(0, 0, 0, ${(light_intensity += 2) / 100})`);
+
+    if (light_intensity >= 100) {
+      clearInterval(light);
+      game_over();
+    }
+  }
   // +----------+
   // |   MENU   |
   // +----------+
   let toggleMenu = () =>
       $('#menu').classList.toggle('active');
+
+  // CONTROLS GUIDE
+  $('#menu .options li[controls]').onclick = () =>
+    $('.controls-guide').classList.add('show');
 
   // AUDIO
   $$('#menu .options li').forEach(e => e.onmouseover = () => $('audio[menu-hover]').play());
@@ -140,11 +164,6 @@ function create ()
   background.scaleX = (game.canvas.width / 1000);
   background.scaleY = background.scaleX;
 
-  // backgroundCavern = this.add.tileSprite(1876, 1500, innerWidth, innerHeight, 'cavernBack');
-
-  // backgroundCavern.scaleX = (game.canvas.width / 1000);
-  // backgroundCavern.scaleY = backgroundCavern.scaleX;
-
   map = this.make.tilemap({ key: 'level1' });
   var groundTiles = map.addTilesetImage('tiles');
   groundLayer = map.createStaticLayer('Map', groundTiles, 0, 0);
@@ -213,24 +232,16 @@ function create ()
   fire = this.add.sprite(810, 830, 'fire-01').play('flicker');
   fire.setScale(0.3);
 
-  this.physics.add.collider(player, fire);
-  this.physics.add.overlap(player, fire, collectFire, null, this);
-
   background.width *= player.x;
+  background.y = 800;
 }
 
-// fix collision with fire
-function collectFire (player, fire)
-{
-  fire.disableBody(true, true);
-}
+var jump = 0;
 
 function update ()
 {
   let velocity = 360,
       bgVelocity = 1;
-
-  background.y = player.y + 40;
 
   if (cursors.left.isDown) {
     player.flipX = true;
@@ -264,15 +275,32 @@ function update ()
   $('.gloom').style.height = groundLayer.height;
 
   if (cursors.up.isDown && player.body.onFloor()) {
-    player.setVelocityY(-400);
+    player.setVelocityY(-900);
     $('audio[walking-grass]').pause();
   }
 
   // coordinates where the monster will appear
-  [
-    [2475, 1328, 1980, 1232]
-  ].forEach((xy) => {
-    if (player.x >= xy[0] && player.y >= xy[1])
-      monster = this.add.image(xy[2], xy[3], 'monster');
-  });
+  // [
+  //   [2475, 1328, 1980, 1232]
+  // ].forEach((xy) => {
+  //   if (player.x >= xy[0])
+  //     monster = this.add.image(xy[2], xy[3], 'monster');
+  // });
+
+  if (player.x >= fire.x)
+    collectFire();
+}
+
+// Collides with fire
+function collectFire()
+{
+  light_intensity = 0;
+  fire.visible = false;
+}
+
+function game_over() {
+  game.scene.pause();
+
+  $('.game-over').classList.add('active');
+  $('.game-over .score span').innerHTML = new Date().getSeconds() - time;
 }
