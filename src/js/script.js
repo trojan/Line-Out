@@ -1,5 +1,5 @@
-const $  = (e) => document.querySelector(e),
-      $$ = (e) => document.querySelectorAll(e);
+const $ = (e) => document.querySelector(e),
+  $$ = (e) => document.querySelectorAll(e);
 
 const config = {
   type: Phaser.AUTO,
@@ -22,8 +22,7 @@ const config = {
 
 var game = new Phaser.Game(config);
 
-function preload ()
-{
+function preload() {
   this.load.spritesheet('tiles', 'assets/world/tileset.png', { frameWidth: 32, frameHeight: 32 });
   this.load.tilemapTiledJSON('level1', 'assets/world/tilemap.json');
 
@@ -39,24 +38,25 @@ function preload ()
   this.load.image('back', 'assets/world/back.png');
   this.load.image('cavernBack', 'assets/world/cavernBackground.png');
   this.load.spritesheet('char', 'assets/sprites/char.png', { frameWidth: 135, frameHeight: 160 });
+  this.load.spritesheet('charLantern', 'assets/sprites/charLantern.png', { frameWidth: 150, frameHeight: 160 });
 }
 
 var player,
-    cursors,
-    monster,
-    background,
-    cameras,
-    map,
-    groundLayer,
-    fire,
-    light_intensity = 0,
-    time,
-    energy = 100;
+  cursors,
+  monster,
+  background,
+  cameras,
+  map,
+  groundLayer,
+  fire,
+  light_intensity = 0,
+  time,
+  energy = 100,
+  hasFire = false;
 
 let getPos = () => console.log(this.player.x + 'x', this.player.y + 'y');
 
-function create ()
-{
+function create() {
   time = new Date().getSeconds();
 
   // LAMP
@@ -67,7 +67,7 @@ function create ()
       $('.lamp .energy').setAttribute('style', `height: ${energy -= 1}px`);
 
       if (energy < 10)
-	$('.lamp').setAttribute('style', 'opacity: 0');
+        $('.lamp').setAttribute('style', 'opacity: 0');
     }, 1000);
 
     // setTimeout(dim_lamp, 1000);
@@ -93,7 +93,7 @@ function create ()
   // |   MENU   |
   // +----------+
   let toggleMenu = () =>
-      $('#menu').classList.toggle('active');
+    $('#menu').classList.toggle('active');
 
   // CONTROLS GUIDE
   $('#menu .options li[controls]').onclick = () =>
@@ -104,11 +104,11 @@ function create ()
   $('audio[walking-grass]').volume = 0.3;
 
   let paused = false;
-  let sound  = localStorage['sound'] || 50;
+  let sound = localStorage['sound'] || 50;
   let states = {
-    pause:    () => { this.scene.pause(); paused = true; },
+    pause: () => { this.scene.pause(); paused = true; },
     continue: () => { this.scene.resume(); paused = false; toggleMenu(); },
-    start:    () => { states['continue'](); }
+    start: () => { states['continue'](); }
   };
 
   $('.sound h1 span').innerHTML = sound;
@@ -120,7 +120,7 @@ function create ()
     $('.sound h1 span').innerHTML = `${localStorage['sound']}%`;
   };
 
-  let changeState  = (state) => state ? 'continue' : 'pause';
+  let changeState = (state) => state ? 'continue' : 'pause';
   let changeTarget = (target) => target === 'save' ? 'load' : 'save';
 
   $('.options li[save-load]').innerHTML = changeTarget('save');
@@ -211,14 +211,14 @@ function create ()
 
   this.anims.create({
     key: 'left',
-    frames: this.anims.generateFrameNumbers('char', { start: 0, end: 3}),
+    frames: this.anims.generateFrameNumbers('char', { start: 0, end: 3 }),
     frameRate: 10,
     repeat: -1
   });
 
   this.anims.create({
     key: 'turn',
-    frames: [ { key: 'char', frame: 4 }],
+    frames: [{ key: 'char', frame: 4 }],
     frameRate: 20
   });
 
@@ -261,21 +261,40 @@ function create ()
   background.y = 800;
 
   this.physics.add.collider(player, fire, collectFire, null, this);
+
+  this.anims.create({
+    key: 'left-with-lamp',
+    frames: this.anims.generateFrameNumbers('charLantern', { start: 0, end: 3 }),
+    frameRate: 10,
+    repeat: -1
+  });
+
+  this.anims.create({
+    key: 'turn-with-lamp',
+    frames: [{ key: 'charLantern', frame: 4 }],
+    frameRate: 20
+  });
+
+  this.anims.create({
+    key: 'right-with-lamp',
+    frames: this.anims.generateFrameNumbers('charLantern', { start: 5, end: 8 }),
+    frameRate: 10,
+    repeat: -1
+  });
 }
 
 var jump = 0;
 
-function update ()
-{
+function update() {
   let velocity = 360,
-      bgVelocity = 1,
-      energy = 100;
+    bgVelocity = 1,
+    energy = 100;
 
   if (cursors.left.isDown) {
     player.flipX = true;
 
     player.setVelocityX(-velocity);
-    player.anims.play('left', true);
+    player.anims.play(hasFire ? 'left-with-lamp' : 'left', true);
 
     background.tilePositionX -= bgVelocity;
 
@@ -286,7 +305,7 @@ function update ()
     player.flipX = false;
 
     player.setVelocityX(velocity);
-    player.anims.play('right', true);
+    player.anims.play(hasFire ? 'right-with-lamp' : 'right', true);
 
     background.tilePositionX += bgVelocity;
 
@@ -295,7 +314,7 @@ function update ()
   }
   else {
     player.setVelocityX(0);
-    player.anims.play('turn');
+    player.anims.play(hasFire ? 'turn-with-lamp' : 'turn');
     $('audio[walking-grass]').pause();
   }
 
@@ -331,10 +350,11 @@ function update ()
 }
 
 // Collides with fire
-function collectFire(player, fire)
-{
+function collectFire(player, fire) {
   // fire.visible = false;
   fire.destroy();
+
+  hasFire = true;
 
   light_intensity = 0;
   energy = 100;
