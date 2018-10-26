@@ -50,24 +50,44 @@ var player,
     groundLayer,
     fire,
     light_intensity = 0,
-    time;
+    time,
+    energy;
 
 let getPos = () => console.log(this.player.x + 'x', this.player.y + 'y');
 
 function create ()
 {
-  time = new Date().getSeconds();
-  // LIGHTING
-  let light = setInterval(dim, 1000);
+  this.energy = 100;
 
-  function dim() {
+  time = new Date().getSeconds();
+
+  // LAMP
+  $('.lamp').innerHTML += "<div class='energy'></div>";
+
+  let dim_lamp = () => {
+    $('.lamp .energy').setAttribute('style', `height: ${this.energy -= 1}px`);
+
+    if (this.energy < 10)
+      $('.lamp').setAttribute('style', 'opacity: 0');
+
+    setTimeout(dim_lamp, 1000);
+  };
+
+  setTimeout(dim_lamp, 1000);
+
+  // LIGHTING
+  let dim = () => {
     $('.gloom').setAttribute('style', `background: rgba(0, 0, 0, ${(light_intensity += 2) / 100})`);
 
     if (light_intensity >= 100) {
       clearInterval(light);
       game_over();
     }
-  }
+
+    setTimeout(dim, 1000);
+  };
+
+  setTimeout(dim, 1000);
   // +----------+
   // |   MENU   |
   // +----------+
@@ -182,7 +202,7 @@ function create ()
   // +------------+
   // |   PLAYER   |
   // +------------+
-  player = this.physics.add.sprite(playerX || 100, playerY || 0, 'char');
+  player = this.physics.add.sprite(playerX || 810, playerY || 830, 'char');
 
   player.setBounce(0.1);
 
@@ -296,6 +316,8 @@ function collectFire()
 {
   light_intensity = 0;
   fire.visible = false;
+
+  this.energy = 100;
 }
 
 function game_over() {

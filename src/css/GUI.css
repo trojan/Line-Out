@@ -328,3 +328,37 @@ body::after {
     font-weight: 800;
     color: #42fd96;
 }
+
+.lamp {
+    right: 0;
+    margin: 2em;
+    width: 109px;
+    height: 164px;
+    z-index: 9999;
+    transition: all 4s;
+    filter: brightness(60%);
+}
+
+.lamp,
+.lamp img,
+.lamp .energy {
+    position: absolute;
+}
+
+.lamp img {
+    z-index: 3;
+}
+
+.lamp .energy {
+    background: linear-gradient(to top, transparent, #e48612 80%);
+    width: 90px;
+    height: 90px;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: 40px auto;
+    border-radius: 30px;
+    z-index: 1;
+    transition: all .3s ease-in-out;
+    transform: rotateX(-180deg);
+}
