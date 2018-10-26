@@ -5,7 +5,7 @@ const config = {
   type: Phaser.AUTO,
   width: window.innerWidth,
   height: window.innerHeight,
-  backgroundColor: '#292222',
+  backgroundColor: '#585858',
   physics: {
     default: 'arcade',
     arcade: {
@@ -21,6 +21,10 @@ const config = {
 };
 
 var game = new Phaser.Game(config);
+
+window.addEventListener('resize', () => {
+  game.resize(window.innerWidth, window.innerHeight);
+});
 
 function preload() {
   this.load.spritesheet('tiles', 'assets/world/tileset.png', { frameWidth: 32, frameHeight: 32 });
@@ -42,17 +46,18 @@ function preload() {
 }
 
 var player,
-  cursors,
-  monster,
-  background,
-  cameras,
-  map,
-  groundLayer,
-  fire,
-  light_intensity = 0,
-  time,
-  energy = 100,
-  hasFire = false;
+    cursors,
+    monster,
+    background,
+    cameras,
+    map,
+    groundLayer,
+    fire,
+    light_intensity = 0,
+    time,
+    energy = 100,
+    hasFire = false,
+    global_timer = 400;
 
 let getPos = () => console.log(this.player.x + 'x', this.player.y + 'y');
 
@@ -68,27 +73,23 @@ function create() {
 
       if (energy < 10)
         $('.lamp').setAttribute('style', 'opacity: 0');
-    }, 1000);
-
-    // setTimeout(dim_lamp, 1000);
+    }, global_timer);
   };
 
   dim_lamp();
 
-  // setTimeout(dim_lamp, 1000);
-
   // LIGHTING
   let dim = () => {
-    $('.gloom').setAttribute('style', `background: rgba(0, 0, 0, ${(light_intensity += 2) / 100})`);
+    $('.gloom').setAttribute('style', `background: rgba(0, 0, 0, ${(light_intensity += 1) / 100})`);
 
     if (light_intensity >= 100) {
+      clearInterval(dim_light);
       game_over();
     }
-
-    setTimeout(dim, 1000);
   };
 
-  setTimeout(dim, 1000);
+  let dim_light = setInterval(dim, global_timer);
+
   // +----------+
   // |   MENU   |
   // +----------+
@@ -209,6 +210,7 @@ function create() {
 
   this.physics.add.collider(player, groundLayer);
 
+  // sprite without lamp
   this.anims.create({
     key: 'left',
     frames: this.anims.generateFrameNumbers('char', { start: 0, end: 3 }),
@@ -226,6 +228,27 @@ function create() {
     key: 'right',
     frames: this.anims.generateFrameNumbers('char', { start: 5, end: 8 }),
     frameRate: 5,
+    repeat: -1
+  });
+
+  // anims of the sprite carrying the lamp
+  this.anims.create({
+    key: 'left-with-lamp',
+    frames: this.anims.generateFrameNumbers('charLantern', { start: 0, end: 3 }),
+    frameRate: 10,
+    repeat: -1
+  });
+
+  this.anims.create({
+    key: 'turn-with-lamp',
+    frames: [{ key: 'charLantern', frame: 4 }],
+    frameRate: 20
+  });
+
+  this.anims.create({
+    key: 'right-with-lamp',
+    frames: this.anims.generateFrameNumbers('charLantern', { start: 5, end: 8 }),
+    frameRate: 10,
     repeat: -1
   });
 
@@ -252,35 +275,27 @@ function create() {
 
   fire = this.physics.add.group({
     key: 'fire',
-    setXY: { x: 810, y: 700, stepX: 70 }
+    setXY: { x: 810, y: 700 }
   });
+
+  // Coordinates of each flame object
+  [
+    [1573, 810],
+    [2053, 260],
+    [2874, 1220]
+  ].forEach((xy) => fire.create(xy[0], xy[1], 'fire'));
+
   this.physics.add.collider(fire, groundLayer);
   fire.playAnimation('flicker');
+
+  // scale all flame objects
+  fire.children.entries.map(i => i.setScale(0.4));
 
   background.width *= player.x;
   background.y = 800;
 
   this.physics.add.collider(player, fire, collectFire, null, this);
 
-  this.anims.create({
-    key: 'left-with-lamp',
-    frames: this.anims.generateFrameNumbers('charLantern', { start: 0, end: 3 }),
-    frameRate: 10,
-    repeat: -1
-  });
-
-  this.anims.create({
-    key: 'turn-with-lamp',
-    frames: [{ key: 'charLantern', frame: 4 }],
-    frameRate: 20
-  });
-
-  this.anims.create({
-    key: 'right-with-lamp',
-    frames: this.anims.generateFrameNumbers('charLantern', { start: 5, end: 8 }),
-    frameRate: 10,
-    repeat: -1
-  });
 }
 
 var jump = 0;
@@ -325,33 +340,10 @@ function update() {
     player.setVelocityY(-900);
     $('audio[walking-grass]').pause();
   }
-
-  // coordinates where the monster will appear
-  // [
-  //   [2475, 1328, 1980, 1232]
-  // ].forEach((xy) => {
-  //   if (player.x >= xy[0])
-  //     monster = this.add.image(xy[2], xy[3], 'monster');
-  // });
-
-  // let dim_lamp = (energy) => {
-  //   setInterval(() => {
-  //     $('.lamp .energy').setAttribute('style', `height: ${energy -= 1}px`);
-
-  //     if (energy <= 10)
-  // 	$('.lamp').setAttribute('style', 'opacity: 0');
-  //   }, 1000);
-
-  //   // setTimeout(dim_lamp(energy), 1000);
-  //   return false;
-  // };
-
-  // setTimeout(dim_lamp(100), 1000);
 }
 
 // Collides with fire
 function collectFire(player, fire) {
-  // fire.visible = false;
   fire.destroy();
 
   hasFire = true;
@@ -363,6 +355,8 @@ function collectFire(player, fire) {
 function game_over() {
   game.scene.pause();
 
+  let now = new Date().getSeconds();
+
   $('.game-over').classList.add('active');
-  $('.game-over .score span').innerHTML = new Date().getSeconds() - time;
+  $('.game-over .score span').innerHTML = Math.abs(now - time);
 }

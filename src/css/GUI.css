@@ -163,7 +163,7 @@ body::after {
 .cutscenes {
     background: #000;
     animation-delay: 9s;
-    z-index: 999;
+    z-index: 9999;
 
     display: none;
 }
@@ -330,13 +330,18 @@ body::after {
 }
 
 .lamp {
-    right: 0;
+    left: 0;
+    bottom: 0;
     margin: 2em;
-    width: 109px;
-    height: 164px;
+    width: 129px;
+    height: 184px;
     z-index: 9999;
     transition: all 4s;
     filter: brightness(60%);
+    border: 10px solid #932b2c;
+    border-radius: 20px;
+    box-sizing: border-box;
+    border-style: ridge;
 }
 
 .lamp,
@@ -350,7 +355,7 @@ body::after {
 }
 
 .lamp .energy {
-    background: linear-gradient(to top, transparent, #e48612 80%);
+    background: linear-gradient(to top, transparent, #e48612 40%);
     width: 90px;
     height: 90px;
     right: 0;
