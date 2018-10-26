@@ -38,7 +38,7 @@ function preload() {
   this.load.image('back', 'assets/world/back.png');
   this.load.image('cavernBack', 'assets/world/cavernBackground.png');
   this.load.spritesheet('char', 'assets/sprites/char.png', { frameWidth: 135, frameHeight: 160 });
-  this.load.spritesheet('charLantern', 'assets/sprites/charLantern.png', { frameWidth: 150, frameHeight: 160 });
+  this.load.spritesheet('charLantern', 'assets/sprites/charLantern.png', { frameWidth: 161, frameHeight: 160 });
 }
 
 var player,
@@ -212,7 +212,7 @@ function create() {
   this.anims.create({
     key: 'left',
     frames: this.anims.generateFrameNumbers('char', { start: 0, end: 3 }),
-    frameRate: 10,
+    frameRate: 5,
     repeat: -1
   });
 
@@ -225,7 +225,7 @@ function create() {
   this.anims.create({
     key: 'right',
     frames: this.anims.generateFrameNumbers('char', { start: 5, end: 8 }),
-    frameRate: 10,
+    frameRate: 5,
     repeat: -1
   });
 
