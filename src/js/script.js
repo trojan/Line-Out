@@ -51,36 +51,37 @@ var player,
     fire,
     light_intensity = 0,
     time,
-    energy;
+    energy = 100;
 
 let getPos = () => console.log(this.player.x + 'x', this.player.y + 'y');
 
 function create ()
 {
-  this.energy = 100;
-
   time = new Date().getSeconds();
 
   // LAMP
   $('.lamp').innerHTML += "<div class='energy'></div>";
 
   let dim_lamp = () => {
-    $('.lamp .energy').setAttribute('style', `height: ${this.energy -= 1}px`);
+    setInterval(() => {
+      $('.lamp .energy').setAttribute('style', `height: ${energy -= 1}px`);
 
-    if (this.energy < 10)
-      $('.lamp').setAttribute('style', 'opacity: 0');
+      if (energy < 10)
+	$('.lamp').setAttribute('style', 'opacity: 0');
+    }, 1000);
 
-    setTimeout(dim_lamp, 1000);
+    // setTimeout(dim_lamp, 1000);
   };
 
-  setTimeout(dim_lamp, 1000);
+  dim_lamp();
+
+  // setTimeout(dim_lamp, 1000);
 
   // LIGHTING
   let dim = () => {
     $('.gloom').setAttribute('style', `background: rgba(0, 0, 0, ${(light_intensity += 2) / 100})`);
 
     if (light_intensity >= 100) {
-      clearInterval(light);
       game_over();
     }
 
@@ -249,11 +250,17 @@ function create ()
     repeat: -1
   });
 
-  fire = this.add.sprite(810, 830, 'fire-01').play('flicker');
-  fire.setScale(0.3);
+  fire = this.physics.add.group({
+    key: 'fire',
+    setXY: { x: 810, y: 700, stepX: 70 }
+  });
+  this.physics.add.collider(fire, groundLayer);
+  fire.playAnimation('flicker');
 
   background.width *= player.x;
   background.y = 800;
+
+  this.physics.add.collider(player, fire, collectFire, null, this);
 }
 
 var jump = 0;
@@ -261,7 +268,8 @@ var jump = 0;
 function update ()
 {
   let velocity = 360,
-      bgVelocity = 1;
+      bgVelocity = 1,
+      energy = 100;
 
   if (cursors.left.isDown) {
     player.flipX = true;
@@ -307,17 +315,29 @@ function update ()
   //     monster = this.add.image(xy[2], xy[3], 'monster');
   // });
 
-  if (player.x >= fire.x)
-    collectFire();
+  // let dim_lamp = (energy) => {
+  //   setInterval(() => {
+  //     $('.lamp .energy').setAttribute('style', `height: ${energy -= 1}px`);
+
+  //     if (energy <= 10)
+  // 	$('.lamp').setAttribute('style', 'opacity: 0');
+  //   }, 1000);
+
+  //   // setTimeout(dim_lamp(energy), 1000);
+  //   return false;
+  // };
+
+  // setTimeout(dim_lamp(100), 1000);
 }
 
 // Collides with fire
-function collectFire()
+function collectFire(player, fire)
 {
-  light_intensity = 0;
-  fire.visible = false;
+  // fire.visible = false;
+  fire.destroy();
 
-  this.energy = 100;
+  light_intensity = 0;
+  energy = 100;
 }
 
 function game_over() {
