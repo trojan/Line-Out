@@ -57,7 +57,8 @@ var player,
     time,
     energy = 100,
     hasFire = false,
-    global_timer = 400;
+    global_timer = 400,
+    dim_light;
 
 let getPos = () => console.log(this.player.x + 'x', this.player.y + 'y');
 
@@ -69,26 +70,24 @@ function create() {
 
   let dim_lamp = () => {
     setInterval(() => {
-      $('.lamp .energy').setAttribute('style', `height: ${energy -= 1}px`);
+      if (!paused)
+	$('.lamp .energy').setAttribute('style', `height: ${energy -= 1}px`);
 
       if (energy < 10)
         $('.lamp').setAttribute('style', 'opacity: 0');
     }, global_timer);
   };
 
-  dim_lamp();
-
   // LIGHTING
   let dim = () => {
-    $('.gloom').setAttribute('style', `background: rgba(0, 0, 0, ${(light_intensity += 1) / 100})`);
+    if (!paused)
+      $('.gloom').setAttribute('style', `background: rgba(0, 0, 0, ${(light_intensity += 1) / 100})`);
 
     if (light_intensity >= 100) {
       clearInterval(dim_light);
       game_over();
     }
   };
-
-  let dim_light = setInterval(dim, global_timer);
 
   // +----------+
   // |   MENU   |
@@ -104,12 +103,23 @@ function create() {
   $$('#menu .options li').forEach(e => e.onmouseover = () => $('audio[menu-hover]').play());
   $('audio[walking-grass]').volume = 0.3;
 
+  let pause = () => {
+    this.scene.pause();
+    paused = true;
+  };
+
+  let resume = () => {
+    this.scene.resume();
+    paused = false;
+    toggleMenu();
+  }
+
   let paused = false;
   let sound = localStorage['sound'] || 50;
   let states = {
-    pause: () => { this.scene.pause(); paused = true; },
-    continue: () => { this.scene.resume(); paused = false; toggleMenu(); },
-    start: () => { states['continue'](); }
+    pause:    () => { pause() },
+    continue: () => { resume() },
+    start:    () => { states['continue'](); }
   };
 
   $('.sound h1 span').innerHTML = sound;
@@ -134,8 +144,12 @@ function create() {
       if (e.keyCode == 32) {
         $(`.cutscenes div:nth-child(${scene++})`).setAttribute('style', `animation: fade 1s forwards`);
 
-        if (scene >= 4)
+        if (scene >= 4) {
           $('.cutscenes').setAttribute('style', 'animation: exit-cutscene 8s forwards');
+
+	  dim_lamp();
+	  dim_light = setInterval(dim, global_timer);
+	}
       }
     }
     else {
