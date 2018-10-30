@@ -1,0 +1,31 @@
+{ "height":4,
+ "infinite":false,
+ "layers":[
+        {
+         "data":[20, 20, 20, 20, 20, 20, 20, 21, 17, 17, 17, 17, 17, 21, 0, 21, 21, 17, 17, 21, 0, 0, 0, 0, 21, 21, 0, 0],
+         "height":4,
+         "id":4,
+         "name":"Camada de Tiles 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":7,
+         "x":0,
+         "y":0
+        }],
+ "nextlayerid":5,
+ "nextobjectid":1,
+ "orientation":"orthogonal",
+ "renderorder":"right-down",
+ "tiledversion":"1.2.0",
+ "tileheight":32,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "source":"floatingdam.tsx"
+        }],
+ "tilewidth":32,
+ "type":"map",
+ "version":1.2,
+ "width":7
+}

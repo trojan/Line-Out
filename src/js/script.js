@@ -208,8 +208,8 @@ function create() {
 
   // collision range in the tileset
   [
-    [8, 12],
-    [18, 32]
+    [8, 23],
+    [25, 27]
   ].forEach(x => groundLayer.setCollisionBetween(...x));
 
   this.physics.world.bounds.width = groundLayer.width;
