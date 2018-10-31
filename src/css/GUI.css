@@ -137,16 +137,17 @@ canvas {
     background: rgba(255, 255, 255, 0.82);
     bottom: 0;
     left: 0;
-    top: 100px;
-    right: 160px;
+    top: -40px;
+    right: 180px;
     margin: 0 auto;
-    width: 300px;
-    height: 300px;
+    width: 700px;
+    height: 700px;
     z-index: 3333;
     border-radius: 50%;
     box-shadow: 0 0 1000px 1000px rgba(0, 0, 0, 0.8), inset 0 0 200px 23px rgb(0, 0, 0);
     background: transparent;
     transform: translate(100px, 150px);
+    transition: all 1s ease-in-out;
 }
 
 body::after {
@@ -311,12 +312,19 @@ body::after {
     opacity: .8;
 }
 
-.game-over {
+.game-over { 
+    background: linear-gradient(to top, #38040a, black);
+}
+
+.win {
+    background: linear-gradient(to top, blue, black);
+}
+
+.game-over, .win {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to top, #ff00001c, black);
-    z-index: 999;
+    z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -326,12 +334,12 @@ body::after {
     transition: all .3s ease-in-out;
 }
 
-.game-over.active {
+.game-over.active, .win.active {
     opacity: 1;
     visibility: visible;
 }
 
-.game-over h1 {
+.game-over h1, .win h1 {
     text-transform: uppercase;
     color: #ffbdbd;
     letter-spacing: .2em;
@@ -353,15 +361,22 @@ body::after {
     left: 0;
     bottom: 0;
     margin: 2em;
-    width: 129px;
-    height: 184px;
+    width: 110px;
+    height: 160px;
     z-index: 9999;
     transition: all 4s;
     filter: brightness(60%);
-    border: 10px solid #932b2c;
+    /* border: 10px solid #932b2c; */
     border-radius: 20px;
     box-sizing: border-box;
     border-style: ridge;
+    filter: brightness(1);
+}
+
+@-webkit-keyframes flicker {
+    50% {
+        filter: brightness(.3);
+    }
 }
 
 .lamp,
@@ -389,3 +404,9 @@ body::after {
     -webkit-clip-path: polygon(10% 0, 90% 0, 100% 20%, 100% 70%, 80% 100%, 20% 100%, 0 68%, 0% 20%);
     clip-path: polygon(10% 0, 90% 0, 100% 20%, 100% 70%, 80% 100%, 20% 100%, 0 68%, 0% 20%);
 }
+
+/* .intro { */
+/*     width: 100%; */
+/*     height: 100%; */
+/*     position: absolute; */
+/* } */

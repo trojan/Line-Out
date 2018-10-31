@@ -15,26 +15,40 @@
         <title>Line Out</title>
     </head>
     <body>
-	<div class="intro"></div>
-	<div class="lamp">
-	    <img src="assets/sprites/lamp.png">
-	</div>
-	<div class="game-over">
-	    <div>
-		<h1>Game Over!</h1>
-		<p class="score">You survived for <span class="score-time">42</span> seconds.</p>
-	    </div>
-	</div>
+	      <div class="intro"></div>
+	      <div class="lamp">
+	          <img src="assets/sprites/lamp.png">
+	      </div>
+	      <div class="game-over">
+	          <div>
+		            <h1>Game Over!</h1>
+		            <p class="score">You survived for <span class="score-time">42</span> seconds.</p>
+	          </div>
+	      </div>
+            <div class="win">
+              <div>
+                    <h1>You won!</h1>
+              </div>
+          </div>
         <div class="gloom">
             <div class="light"></div>
         </div>
         <div class="cutscenes">
-	    <div></div>
-	    <div></div>
-	    <div></div>
+	          <div></div>
+	          <div></div>
+	          <div></div>
         </div>
-        <audio menu-hover>
-            <source src="assets/audio/menu.wav"></source>
+        <audio get-fire>
+            <source src="assets/audio/get-fire.wav"></source>
+        </audio>
+        <audio soundtrack>
+            <source src="assets/audio/soundtrack.mpeg"></source>
+        </audio>
+        <audio monster-1>
+            <source src="assets/audio/monster-2.wav"></source>
+        </audio>
+        <audio monster-2>
+            <source src="assets/audio/monster-1.wav"></source>
         </audio>
         <audio menu-click>
             <source src="assets/audio/menuclick.wav"></source>
@@ -44,7 +58,7 @@
         </audio>
         <div id="menu">
             <ul class="options">
-		<div class="controls-guide"><div class="close" onclick="document.querySelector('.controls-guide').classList.remove('show');"><span>&#10006;</span></div></div>
+		            <div class="controls-guide"><div class="close" onclick="document.querySelector('.controls-guide').classList.remove('show');"><span>&#10006;</span></div></div>
                 <li states>pause</li>
                 <li save-load>save</li>
                 <li controls>controls</li>

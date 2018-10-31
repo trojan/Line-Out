@@ -1,5 +1,5 @@
 const $ = (e) => document.querySelector(e),
-  $$ = (e) => document.querySelectorAll(e);
+      $$ = (e) => document.querySelectorAll(e);
 
 const config = {
   type: Phaser.AUTO,
@@ -57,13 +57,30 @@ var player,
     time,
     energy = 100,
     hasFire = false,
-    global_timer = 400,
-    dim_light;
+    global_timer = 200,
+    dim_light,
+    monster_summoned = false;
 
-let getPos = () => console.log(this.player.x + 'x', this.player.y + 'y');
+let getPos  = () => [this.player.x, this.player.y];
+let savePos = () => localStorage['playerPos'] = (getPos());
 
 function create() {
   time = new Date().getSeconds();
+
+  // MONSTER
+  let summon_monster = () => {
+    monster.visible = true;
+
+    $('audio[soundtrack]').volume = 0;
+
+    if (!paused) {
+      $('audio[monster-1]').play();
+
+      setTimeout(() => {
+        $('audio[monster-2]').play();
+      }, 5000);
+    }
+  };
 
   // LAMP
   $('.lamp').innerHTML += "<div class='energy'></div>";
@@ -71,10 +88,19 @@ function create() {
   let dim_lamp = () => {
     setInterval(() => {
       if (!paused)
-	$('.lamp .energy').setAttribute('style', `height: ${energy -= 1}px`);
+	      $('.lamp .energy').setAttribute('style', `height: ${energy -= 1}px`);
 
-      if (energy < 10)
+      if (energy < 40) {
+      	summon_monster();
+        $('.lamp').setAttribute('style', 'animation: flicker .3s infinite');
+      }
+      else if (energy < 10)
         $('.lamp').setAttribute('style', 'opacity: 0');
+      else {
+        $('.lamp').setAttribute('style', 'animation: none');
+
+        $('audio[soundtrack]').volume = 1;
+      }
     }, global_timer);
   };
 
@@ -85,7 +111,7 @@ function create() {
 
     if (light_intensity >= 100) {
       clearInterval(dim_light);
-      game_over();
+      game_over(this);
     }
   };
 
@@ -93,7 +119,7 @@ function create() {
   // |   MENU   |
   // +----------+
   let toggleMenu = () =>
-    $('#menu').classList.toggle('active');
+      $('#menu').classList.toggle('active');
 
   // CONTROLS GUIDE
   $('#menu .options li[controls]').onclick = () =>
@@ -102,6 +128,7 @@ function create() {
   // AUDIO
   $$('#menu .options li').forEach(e => e.onmouseover = () => $('audio[menu-hover]').play());
   $('audio[walking-grass]').volume = 0.3;
+  $('audio[get-fire]').volume = 0.3;
 
   let pause = () => {
     this.scene.pause();
@@ -112,13 +139,13 @@ function create() {
     this.scene.resume();
     paused = false;
     toggleMenu();
-  }
+  };
 
   let paused = false;
   let sound = localStorage['sound'] || 50;
   let states = {
-    pause:    () => { pause() },
-    continue: () => { resume() },
+    pause:    () => { pause(); },
+    continue: () => { resume(); },
     start:    () => { states['continue'](); }
   };
 
@@ -147,9 +174,11 @@ function create() {
         if (scene >= 4) {
           $('.cutscenes').setAttribute('style', 'animation: exit-cutscene 8s forwards');
 
-	  dim_lamp();
-	  dim_light = setInterval(dim, global_timer);
-	}
+          $('audio[soundtrack]').play();
+
+	        dim_lamp();
+	        dim_light = setInterval(dim, global_timer);
+	      }
       }
     }
     else {
@@ -179,11 +208,15 @@ function create() {
     $('audio[menu-click]').play();
   };
 
+	let savePos = () => {
+		localStorage['playerPos'] = [player.x, player.y];
+	};
+
   $('.options li[save-load]').onclick = (e) => {
     let target = e.target.innerHTML;
 
     if (target === 'save')
-      localStorage['playerPos'] = [player.x, player.y];
+			savePos();
     else if (target === 'load')
       [player.x, player.y] = [playerX, playerY];
 
@@ -223,6 +256,11 @@ function create() {
   player.setBounce(0.1);
 
   this.physics.add.collider(player, groundLayer);
+
+  monster = this.physics.add.sprite((player.x - 300), (player.y - 300), 'monster');
+  monster.visible = false;
+
+  this.physics.add.collider(monster, groundLayer);
 
   // sprite without lamp
   this.anims.create({
@@ -296,8 +334,17 @@ function create() {
   [
     [1573, 810],
     [2053, 260],
-    [2874, 1220]
-  ].forEach((xy) => fire.create(xy[0], xy[1], 'fire'));
+    [2874, 1220],
+    [4240, 1250],
+    [4510, 550],
+    [6164, 840],
+    [1924, 1225],
+    [6064, 1830],
+    [4626, 2224],
+    [2505, 2695],
+    [644, 3210],
+    [3180, 3625]
+  ].forEach((xy) => fire.create(...xy, 'fire'));
 
   this.physics.add.collider(fire, groundLayer);
   fire.playAnimation('flicker');
@@ -309,20 +356,30 @@ function create() {
   background.y = 800;
 
   this.physics.add.collider(player, fire, collectFire, null, this);
-
 }
 
 var jump = 0;
 
+function checkBounds(bounds) {
+  if (bounds >= 6000)
+    $('.gloom .light').setAttribute('style', 'right: 100%');
+  else if (bounds <= 400)
+    $('.gloom .light').setAttribute('style', 'left: auto; right: 0');
+  else
+    $('.gloom .light').setAttribute('style', 'left: 0; right: 180px;');
+}
+
 function update() {
-  let velocity = 360,
-    bgVelocity = 1,
-    energy = 100;
+  let velocity     = 360,
+      bgVelocity   = 1,
+      energy       = 100,
+      playerBounds = Math.abs(player.x - groundLayer.width);
 
   if (cursors.left.isDown) {
     player.flipX = true;
 
     player.setVelocityX(-velocity);
+    checkBounds(playerBounds);
     player.anims.play(hasFire ? 'left-with-lamp' : 'left', true);
 
     background.tilePositionX -= bgVelocity;
@@ -334,12 +391,14 @@ function update() {
     player.flipX = false;
 
     player.setVelocityX(velocity);
+    checkBounds(playerBounds);
     player.anims.play(hasFire ? 'right-with-lamp' : 'right', true);
 
     background.tilePositionX += bgVelocity;
 
     if (player.body.onFloor())
       $('audio[walking-grass]').play();
+
   }
   else {
     player.setVelocityX(0);
@@ -354,6 +413,12 @@ function update() {
     player.setVelocityY(-900);
     $('audio[walking-grass]').pause();
   }
+
+  monster.x = player.x - 150;
+  monster.y = player.y - 150;
+
+  if (player.x >= 5926 && player.y == 3568)
+    win(this);
 }
 
 // Collides with fire
@@ -364,10 +429,21 @@ function collectFire(player, fire) {
 
   light_intensity = 0;
   energy = 100;
+  monster.visible = false;
+
+  $('audio[get-fire]').play();
 }
 
-function game_over() {
+function win(game) {
   game.scene.pause();
+  paused = true;
+
+  $('.win').classList.add('active');
+}
+
+function game_over(game) {
+  game.scene.pause();
+  paused = true;
 
   let now = new Date().getSeconds();
 
