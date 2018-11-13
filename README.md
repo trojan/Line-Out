@@ -5,7 +5,7 @@ WIP
 ## How to play
 
 - Download or clone the project on a directory of your choice
-- Run the executable `mongoose-6.9.exe` in the root folder to run the server
+- Run the executable `mongoose-6.9.exe` in the root folder to run the server (download it from https://cesanta.com/ if you're using Linux) 
 - Select the `src` folder once a window pops up on your browser
 - Play the game.
 
